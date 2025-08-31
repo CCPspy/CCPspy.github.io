@@ -1,4 +1,4 @@
-theme: Architect
+theme: jekyll-theme-minimal
 
 # Markdown Cheat Sheet
 
