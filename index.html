@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome to CCPspy's Website</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; padding: 0;
+      background: #222;
+      color: #eee;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      align-items: center;
+    }
+    .intro {
+      margin-top: 40px;
+      text-align: center;
+    }
+    .links {
+      margin: 30px 0 40px 0;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 18px;
+    }
+    .links a {
+      background: #444;
+      color: #f1c40f;
+      text-decoration: none;
+      padding: 8px 16px;
+      border-radius: 12px;
+      transition: background 0.2s;
+    }
+    .links a:hover {
+      background: #f1c40f;
+      color: #222;
+    }
+    .pong-container {
+      background: #111;
+      padding: 20px;
+      border-radius: 20px;
+      margin-bottom: 40px;
+      box-shadow: 0 0 24px #0006;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h2 {
+      color: #f1c40f;
+      margin-bottom: 12px;
+    }
+    canvas {
+      background: #222;
+      border: 2px solid #444;
+      border-radius: 6px;
+      display: block;
+    }
+    .pong-instructions {
+      color: #aaa;
+      margin-bottom: 9px;
+      font-size: 15px;
+    }
+  </style>
+</head>
+<body>
+  <div class="intro">
+    <h1>Welcome to CCPspy's Website!</h1>
+    <p>
+      This is my personal homepage. Explore my projects and other cool stuff linked below.<br>
+      At the bottom, play a quick round of Pong against the computer!
+    </p>
+  </div>
+  <div class="links">
+    <a href="https://ccpspy.github.io/project1">project1</a>
+    <a href="https://ccpspy.github.io/games">games</a>
+    <a href="https://ccpspy.github.io/tools">tools</a>
+    <a href="https://ccpspy.github.io/blog">blog</a>
+    <a href="https://github.com/CCPspy">github</a>
+    <a href="https://ccpspy.github.io/ai">ai</a>
+    <a href="https://ccpspy.github.io/links">links</a>
+    <a href="https://ccpspy.github.io/about">about</a>
+    <!-- Add more links as you wish! -->
+  </div>
+  <div class="pong-container">
+    <h2>Pong Game</h2>
+    <div class="pong-instructions">
+      Use your <b>Up</b> and <b>Down</b> arrow keys to move your paddle (right side).<br>
+      Try to beat the computer (left side)!
+    </div>
+    <canvas id="pong" width="500" height="300"></canvas>
+    <div id="pong-score" style="color:#f1c40f; margin-top:10px; font-size:16px;"></div>
+  </div>
+  <script>
+    // Pong game logic
+    const canvas = document.getElementById('pong');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height;
+
+    // Paddle settings
+    const paddleW = 10, paddleH = 60, padMargin = 10;
+    let playerY = h/2 - paddleH/2, aiY = h/2 - paddleH/2;
+    const paddleSpeed = 5;
+
+    // Ball settings
+    let ballX = w/2, ballY = h/2;
+    let ballVX = -4, ballVY = 2.5;
+    const ballSize = 12;
+
+    let playerScore = 0, aiScore = 0;
+    const maxScore = 5;
+
+    function drawRect(x, y, w, h, color) {
+      ctx.fillStyle = color;
+      ctx.fillRect(x, y, w, h);
+    }
+    function drawCircle(x, y, r, color) {
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI*2);
+      ctx.fill();
+    }
+
+    function resetBall(direction = 1) {
+      ballX = w/2;
+      ballY = h/2;
+      ballVX = direction * (3.5 + Math.random()*1.5);
+      ballVY = (Math.random()-0.5)*5;
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, w, h);
+      // Draw middle dashed line
+      ctx.setLineDash([8, 8]);
+      ctx.strokeStyle = "#666";
+      ctx.beginPath();
+      ctx.moveTo(w/2, 0);
+      ctx.lineTo(w/2, h);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // Draw paddles
+      drawRect(padMargin, aiY, paddleW, paddleH, "#f1c40f");
+      drawRect(w-padMargin-paddleW, playerY, paddleW, paddleH, "#09f");
+
+      // Draw ball
+      drawCircle(ballX, ballY, ballSize, "#fff");
+    }
+
+    function update() {
+      // Ball movement
+      ballX += ballVX;
+      ballY += ballVY;
+
+      // Top/bottom wall collision
+      if (ballY-ballSize < 0) { ballY = ballSize; ballVY *= -1; }
+      if (ballY+ballSize > h) { ballY = h-ballSize; ballVY *= -1; }
+
+      // Paddle collisions
+      // AI paddle (left)
+      if (ballX-ballSize < padMargin+paddleW &&
+          ballY > aiY && ballY < aiY+paddleH) {
+        ballX = padMargin+paddleW+ballSize;
+        ballVX *= -1.05;
+        ballVY += (Math.random()-0.5)*2;
+      }
+      // Player paddle (right)
+      if (ballX+ballSize > w-padMargin-paddleW &&
+          ballY > playerY && ballY < playerY+paddleH) {
+        ballX = w-padMargin-paddleW-ballSize;
+        ballVX *= -1.05;
+        ballVY += (Math.random()-0.5)*2;
+      }
+
+      // Scoring
+      if (ballX-ballSize < 0) {
+        playerScore++;
+        resetBall(1);
+      }
+      if (ballX+ballSize > w) {
+        aiScore++;
+        resetBall(-1);
+      }
+
+      // AI movement: follow ball with some delay
+      let aiCenter = aiY + paddleH/2;
+      if (aiCenter < ballY-10) aiY += paddleSpeed*0.6;
+      else if (aiCenter > ballY+10) aiY -= paddleSpeed*0.6;
+      // Clamp AI paddle
+      if (aiY < 0) aiY = 0;
+      if (aiY + paddleH > h) aiY = h - paddleH;
+
+      // Clamp player paddle
+      if (playerY < 0) playerY = 0;
+      if (playerY + paddleH > h) playerY = h - paddleH;
+    }
+
+    function updateScore() {
+      document.getElementById('pong-score').textContent =
+        `Player: ${playerScore} | Computer: ${aiScore}`;
+      if (playerScore >= maxScore || aiScore >= maxScore) {
+        document.getElementById('pong-score').textContent +=
+          playerScore >= maxScore ? " — You Win! 🎉" : " — Computer Wins! 🤖";
+        // Reset after short delay
+        setTimeout(() => {
+          playerScore = 0; aiScore = 0;
+          resetBall(playerScore >= maxScore ? -1 : 1);
+          document.getElementById('pong-score').textContent =
+            `Player: ${playerScore} | Computer: ${aiScore}`;
+        }, 2500);
+      }
+    }
+
+    function gameLoop() {
+      update();
+      draw();
+      updateScore();
+      requestAnimationFrame(gameLoop);
+    }
+
+    // Controls
+    window.addEventListener('keydown', (e) => {
+      if (e.key === "ArrowUp") playerY -= paddleSpeed*2.4;
+      if (e.key === "ArrowDown") playerY += paddleSpeed*2.4;
+    });
+
+    resetBall(1);
+    gameLoop();
+  </script>
+</body>
+</html>
