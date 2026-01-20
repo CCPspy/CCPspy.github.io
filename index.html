@@ -31,7 +31,7 @@
       line-height: 1.6;
       padding: 20px;
       position: relative;
-      overflow-x: hidden; /* Important for the fly-out animation */
+      overflow-x: hidden;
     }
 
     /* "Less Boring" Background: Cyber Grid */
@@ -138,12 +138,15 @@
     /* Project Grid */
     .projects-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      /* Forced 2 columns on desktop */
+      grid-template-columns: 1fr 1fr;
       gap: 24px;
       width: 100%;
+      max-width: 700px; /* Constrain width to ensure it looks like a block */
+      margin: 0 auto;
       perspective: 1000px;
       position: relative;
-      z-index: 20; /* Cards above background */
+      z-index: 20; 
     }
 
     /* Project Cards */
@@ -161,7 +164,7 @@
       align-items: center;
       justify-content: center;
       position: relative;
-      overflow: hidden;
+      overflow: visible; /* Changed to visible so brain can fly out if needed */
       /* Verification Code: Eric_Li_Property_001 */
       animation: fadeInUp 0.8s ease-out backwards;
       z-index: 20;
@@ -178,6 +181,7 @@
       background: rgba(51, 65, 85, 0.8);
       border-color: #f1c40f;
       box-shadow: 0 0 30px rgba(241, 196, 15, 0.15);
+      z-index: 25; /* Bring to front on hover */
     }
 
     .card-icon {
@@ -237,16 +241,28 @@
 
     /* --- EASTER EGG STYLES --- */
 
-    /* Shake Animation for CCPspy */
+    /* Shake Animation */
     @keyframes nervousShake {
-      0%, 100% { transform: translateX(0); }
-      10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
-      20%, 40%, 60%, 80% { transform: translateX(4px); }
+      0%, 100% { transform: translate(0, 0) rotate(0); }
+      10% { transform: translate(-2px, -2px) rotate(-1deg); }
+      20% { transform: translate(2px, 2px) rotate(1deg); }
+      30% { transform: translate(-2px, 2px) rotate(0deg); }
+      40% { transform: translate(2px, -2px) rotate(1deg); }
+      50% { transform: translate(-1px, 2px) rotate(-1deg); }
+      60% { transform: translate(-3px, 1px) rotate(0deg); }
+      70% { transform: translate(3px, 1px) rotate(-1deg); }
+      80% { transform: translate(-1px, -1px) rotate(1deg); }
+      90% { transform: translate(1px, 2px) rotate(0deg); }
     }
 
+    .shaking-element {
+      animation: nervousShake 0.4s ease-in-out infinite;
+    }
+    
     .shaking-ccpspy {
       animation: nervousShake 0.4s ease-in-out infinite;
-      color: #ff4757; /* Slight red tint for drama */
+      color: #ff4757; 
+      display: inline-block;
     }
 
     /* Particle/Confetti Container */
@@ -254,7 +270,7 @@
       position: fixed;
       top: 0; left: 0; width: 100%; height: 100%;
       pointer-events: none;
-      z-index: 5; /* Behind cards (z-index 20), but in front of body bg */
+      z-index: 5;
       overflow: hidden;
     }
 
@@ -269,10 +285,15 @@
     @media (max-width: 600px) {
       h1 { font-size: 2rem; }
       .name-wrapper { gap: 10px; }
-      .name-separator { display: none; } /* Hide separator on mobile for cleaner stack */
+      .name-separator { display: none; }
       .name-wrapper { flex-direction: column; }
       .intro-text { font-size: 1rem; }
       .project-card { padding: 24px; }
+      
+      /* Revert to 1 column on mobile */
+      .projects-grid {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
@@ -293,7 +314,8 @@
         <h1 class="name-ccpspy" id="ccpspy-title">CCPspy</h1>
       </div>
       
-      <div class="school-tag">Willetton SHS</div>
+      <!-- Removed Willetton SHS reference -->
+      <div class="school-tag" style="visibility:hidden">Property of Eric Li</div>
 
       <p class="intro-text">
         Creator, Developer, and 3D Printer. <br>
@@ -365,9 +387,11 @@
       const ericTitle = document.getElementById('eric-title');
       const ccpspyTitle = document.getElementById('ccpspy-title');
       const brainIcon = document.getElementById('brain-icon');
+      const allCards = document.querySelectorAll('.project-card');
       
-      // 1. Shake CCPspy
+      // 1. Shake CCPspy AND Cards
       ccpspyTitle.classList.add('shaking-ccpspy');
+      allCards.forEach(card => card.classList.add('shaking-element'));
 
       // 2. Launch Confetti (Flicks from behind buttons)
       launchConfetti();
@@ -382,9 +406,10 @@
       const brainRect = brainIcon.getBoundingClientRect();
 
       // Calculate translation deltas
-      // We want Eric slightly below center, Brain slightly above center
-      const ericTargetY = viewportCenterY + 50; 
-      const brainTargetY = viewportCenterY - 60; // Brain sits on top
+      // We want Brain sitting ON TOP of Eric
+      // Target positions relative to viewport center
+      const ericTargetY = viewportCenterY + 20; 
+      const brainTargetY = viewportCenterY - 60; // Just above Eric
 
       const ericDeltaX = viewportCenterX - (ericRect.left + ericRect.width / 2);
       const ericDeltaY = ericTargetY - (ericRect.top + ericRect.height / 2);
@@ -393,7 +418,6 @@
       const brainDeltaY = brainTargetY - (brainRect.top + brainRect.height / 2);
 
       // Apply Initial Transformation (Move to middle & Scale Up)
-      // Transition set via JS to ensure it's fresh
       ericTitle.style.transition = 'transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1)';
       brainIcon.style.transition = 'transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1)';
       
@@ -416,20 +440,30 @@
 
       // 5. Reset Everything (After 3s)
       setTimeout(() => {
-        // Reset Styles
-        ericTitle.style.transition = 'transform 0.5s ease';
-        brainIcon.style.transition = 'transform 0.5s ease';
-        ericTitle.style.transform = '';
-        brainIcon.style.transform = '';
+        // INSTANT RESET (No floating back)
+        ericTitle.style.transition = 'none'; // Disable animation for reset
+        brainIcon.style.transition = 'none'; // Disable animation for reset
+        
+        // Reset transforms immediately
+        ericTitle.style.transform = 'translate(0,0) scale(1)';
+        brainIcon.style.transform = 'translate(0,0) scale(1)';
+        
         brainIcon.style.zIndex = '';
         ericTitle.style.zIndex = '';
         
         ccpspyTitle.classList.remove('shaking-ccpspy');
+        allCards.forEach(card => card.classList.remove('shaking-element'));
         
         // Cleanup confetti
         document.getElementById('confetti-container').innerHTML = '';
         
-        isAnimating = false;
+        // Brief timeout to re-enable transitions for future hover effects
+        setTimeout(() => {
+            ericTitle.style.transition = ''; 
+            brainIcon.style.transition = '';
+            isAnimating = false;
+        }, 100);
+        
       }, 3000);
     }
 
@@ -438,12 +472,10 @@
       const colors = ['#f1c40f', '#e74c3c', '#3498db', '#9b59b6', '#2ecc71'];
       const cards = document.querySelectorAll('.project-card');
 
-      // Spawn confetti from behind each card
       cards.forEach(card => {
         const rect = card.getBoundingClientRect();
         const centerX = rect.left + rect.width / 2;
-        const bottomY = rect.bottom;
-
+        
         // Create 20 particles per card
         for (let i = 0; i < 20; i++) {
           const p = document.createElement('div');
@@ -452,18 +484,16 @@
           p.style.left = centerX + 'px';
           p.style.top = (rect.top + rect.height/2) + 'px';
           
-          // Random physics values
-          const angle = Math.random() * Math.PI * 2; // Random direction
-          const velocity = 100 + Math.random() * 200; // Random explosive power
+          const angle = Math.random() * Math.PI * 2;
+          const velocity = 100 + Math.random() * 200; 
           const rotation = Math.random() * 720;
           
-          // Animate using Web Animations API for better performance
           p.animate([
             { transform: `translate(0, 0) rotate(0deg)`, opacity: 1 },
-            { transform: `translate(${(Math.random() - 0.5) * 200}px, -${velocity}px) rotate(${rotation/2}deg)`, opacity: 1, offset: 0.4 }, // Explode UP
-            { transform: `translate(${(Math.random() - 0.5) * 400}px, 600px) rotate(${rotation}deg)`, opacity: 0 } // Fall DOWN
+            { transform: `translate(${(Math.random() - 0.5) * 200}px, -${velocity}px) rotate(${rotation/2}deg)`, opacity: 1, offset: 0.4 }, 
+            { transform: `translate(${(Math.random() - 0.5) * 400}px, 600px) rotate(${rotation}deg)`, opacity: 0 } 
           ], {
-            duration: 2500, // Slightly less than 3s to clear before reset
+            duration: 2500,
             easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
             fill: 'forwards'
           });
