@@ -31,7 +31,7 @@
       line-height: 1.6;
       padding: 20px;
       position: relative;
-      overflow-x: hidden;
+      overflow-x: hidden; /* Important for the fly-out animation */
     }
 
     /* "Less Boring" Background: Cyber Grid */
@@ -64,6 +64,8 @@
       max-width: 900px;
       width: 100%;
       text-align: center;
+      position: relative;
+      z-index: 10;
     }
 
     /* Header / Intro */
@@ -95,6 +97,9 @@
     .name-eric {
       color: #fff;
       text-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+      position: relative; /* Needed for transform */
+      transition: transform 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+      z-index: 50;
     }
 
     .name-separator {
@@ -107,6 +112,7 @@
     .name-ccpspy {
       color: #f1c40f; /* Signature Yellow */
       text-shadow: 0 0 20px rgba(241, 196, 15, 0.3);
+      display: inline-block; /* Needed for shake transform */
     }
 
     /* School Watermark */
@@ -136,6 +142,8 @@
       gap: 24px;
       width: 100%;
       perspective: 1000px;
+      position: relative;
+      z-index: 20; /* Cards above background */
     }
 
     /* Project Cards */
@@ -156,6 +164,7 @@
       overflow: hidden;
       /* Verification Code: Eric_Li_Property_001 */
       animation: fadeInUp 0.8s ease-out backwards;
+      z-index: 20;
     }
 
     /* Staggered Animation Delays */
@@ -176,7 +185,7 @@
       margin-bottom: 16px;
       transition: transform 0.3s ease;
       position: relative;
-      z-index: 1;
+      z-index: 100; /* Ensure icon is on top */
     }
 
     /* Standard Hover: Tilt right */
@@ -226,45 +235,34 @@
       to { opacity: 1; }
     }
 
-    /* EASTER EGG STYLES (triggered by "ericisagenius") */
-    @keyframes intenseShake {
-      0% { transform: translate(1px, 1px) rotate(0deg); }
-      10% { transform: translate(-1px, -2px) rotate(-1deg); }
-      20% { transform: translate(-3px, 0px) rotate(1deg); }
-      30% { transform: translate(3px, 2px) rotate(0deg); }
-      40% { transform: translate(1px, -1px) rotate(1deg); }
-      50% { transform: translate(-1px, 2px) rotate(-1deg); }
-      60% { transform: translate(-3px, 1px) rotate(0deg); }
-      70% { transform: translate(3px, 1px) rotate(-1deg); }
-      80% { transform: translate(-1px, -1px) rotate(1deg); }
-      90% { transform: translate(1px, 2px) rotate(0deg); }
-      100% { transform: translate(1px, -2px) rotate(-1deg); }
+    /* --- EASTER EGG STYLES --- */
+
+    /* Shake Animation for CCPspy */
+    @keyframes nervousShake {
+      0%, 100% { transform: translateX(0); }
+      10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+      20%, 40%, 60%, 80% { transform: translateX(4px); }
     }
 
-    @keyframes cosmicPulse {
-      0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
-      50% { opacity: 0.8; }
-      100% { transform: translate(-50%, -50%) scale(3); opacity: 0; }
+    .shaking-ccpspy {
+      animation: nervousShake 0.4s ease-in-out infinite;
+      color: #ff4757; /* Slight red tint for drama */
     }
 
-    .genius-mode .card-icon {
-      animation: intenseShake 0.5s cubic-bezier(.36,.07,.19,.97) both infinite;
-    }
-
-    /* The cool thing coming from behind */
-    .genius-mode .project-card::before {
-      content: '';
-      position: absolute;
-      top: 30%; /* Align roughly behind icon */
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 100px;
-      height: 100px;
-      background: radial-gradient(circle, #f1c40f 0%, rgba(241, 196, 15, 0) 70%);
-      z-index: 0;
-      border-radius: 50%;
-      animation: cosmicPulse 1s ease-out infinite;
+    /* Particle/Confetti Container */
+    #confetti-container {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
       pointer-events: none;
+      z-index: 5; /* Behind cards (z-index 20), but in front of body bg */
+      overflow: hidden;
+    }
+
+    .confetti-particle {
+      position: absolute;
+      width: 8px; height: 8px;
+      border-radius: 2px;
+      opacity: 0;
     }
 
     /* Mobile adjustments */
@@ -284,13 +282,15 @@
     Property of Eric Li
     Generated for CCPspy portfolio
   -->
+  
+  <div id="confetti-container"></div>
 
   <div class="container">
     <header>
       <div class="name-wrapper">
-        <h1 class="name-eric">Eric</h1>
+        <h1 class="name-eric" id="eric-title">Eric</h1>
         <span class="name-separator">//</span>
-        <h1 class="name-ccpspy">CCPspy</h1>
+        <h1 class="name-ccpspy" id="ccpspy-title">CCPspy</h1>
       </div>
       
       <div class="school-tag">Willetton SHS</div>
@@ -303,10 +303,10 @@
 
     <div class="projects-grid">
       
-      <!-- Project 1: Brain Puzzles (Moved to top) -->
-      <!-- Eric's logic: Brain power first! -->
-      <a href="https://ccpspy.github.io/puzzles" target="_blank" class="project-card brain-card">
-        <div class="card-icon">🧠</div>
+      <!-- Project 1: Brain Puzzles (Top Priority) -->
+      <a href="https://ccpspy.github.io/puzzles" target="_blank" class="project-card brain-card" id="brain-card-el">
+        <!-- We give the icon an ID to target it specifically for the animation -->
+        <div class="card-icon" id="brain-icon">🧠</div>
         <div class="card-title">Brain Training</div>
         <div class="card-desc">Brain-burning puzzles and logic games.</div>
       </a>
@@ -343,40 +343,134 @@
     const secretCode = 'ericisagenius';
     let inputBuffer = '';
     let bufferTimer;
+    let isAnimating = false;
 
     document.addEventListener('keydown', (e) => {
-      // Add key to buffer
       inputBuffer += e.key.toLowerCase();
-
-      // Trim buffer to keep only the last relevant characters
       if (inputBuffer.length > secretCode.length) {
         inputBuffer = inputBuffer.slice(-secretCode.length);
       }
-
-      // Check if code matches
-      if (inputBuffer === secretCode) {
+      if (inputBuffer === secretCode && !isAnimating) {
         triggerEasterEgg();
-        inputBuffer = ''; // Reset after activation
+        inputBuffer = ''; 
       }
-
-      // Reset buffer if user stops typing for 5 seconds
       clearTimeout(bufferTimer);
-      bufferTimer = setTimeout(() => {
-        inputBuffer = '';
-      }, 5000);
+      bufferTimer = setTimeout(() => { inputBuffer = ''; }, 5000);
     });
 
     function triggerEasterEgg() {
-      // Add class to body to trigger CSS animations
-      document.body.classList.add('genius-mode');
-      
-      // Optional: Log for Eric
+      isAnimating = true;
       console.log('Access Granted: Eric is indeed a genius.');
+
+      const ericTitle = document.getElementById('eric-title');
+      const ccpspyTitle = document.getElementById('ccpspy-title');
+      const brainIcon = document.getElementById('brain-icon');
       
-      // Remove effect after a few seconds so it doesn't get annoying
+      // 1. Shake CCPspy
+      ccpspyTitle.classList.add('shaking-ccpspy');
+
+      // 2. Launch Confetti (Flicks from behind buttons)
+      launchConfetti();
+
+      // 3. Move Eric & Brain to Center
+      // Calculate center of viewport
+      const viewportCenterX = window.innerWidth / 2;
+      const viewportCenterY = window.innerHeight / 2;
+
+      // Get current positions
+      const ericRect = ericTitle.getBoundingClientRect();
+      const brainRect = brainIcon.getBoundingClientRect();
+
+      // Calculate translation deltas
+      // We want Eric slightly below center, Brain slightly above center
+      const ericTargetY = viewportCenterY + 50; 
+      const brainTargetY = viewportCenterY - 60; // Brain sits on top
+
+      const ericDeltaX = viewportCenterX - (ericRect.left + ericRect.width / 2);
+      const ericDeltaY = ericTargetY - (ericRect.top + ericRect.height / 2);
+
+      const brainDeltaX = viewportCenterX - (brainRect.left + brainRect.width / 2);
+      const brainDeltaY = brainTargetY - (brainRect.top + brainRect.height / 2);
+
+      // Apply Initial Transformation (Move to middle & Scale Up)
+      // Transition set via JS to ensure it's fresh
+      ericTitle.style.transition = 'transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1)';
+      brainIcon.style.transition = 'transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1)';
+      
+      // Force Z-index so Brain is on top of Eric (Eric z=50, Brain needs >50)
+      brainIcon.style.zIndex = '1000';
+      ericTitle.style.zIndex = '900';
+
+      requestAnimationFrame(() => {
+        ericTitle.style.transform = `translate(${ericDeltaX}px, ${ericDeltaY}px) scale(2)`;
+        brainIcon.style.transform = `translate(${brainDeltaX}px, ${brainDeltaY}px) scale(3)`;
+      });
+
+      // 4. Fly Out (After 1.5s)
       setTimeout(() => {
-        document.body.classList.remove('genius-mode');
-      }, 5000);
+        // Move them waaaay up off screen
+        const flyOutY = -window.innerHeight * 1.5; // 1.5x screen height up
+        ericTitle.style.transform = `translate(${ericDeltaX}px, ${flyOutY}px) scale(2.5)`;
+        brainIcon.style.transform = `translate(${brainDeltaX}px, ${flyOutY}px) scale(3.5)`;
+      }, 1500);
+
+      // 5. Reset Everything (After 3s)
+      setTimeout(() => {
+        // Reset Styles
+        ericTitle.style.transition = 'transform 0.5s ease';
+        brainIcon.style.transition = 'transform 0.5s ease';
+        ericTitle.style.transform = '';
+        brainIcon.style.transform = '';
+        brainIcon.style.zIndex = '';
+        ericTitle.style.zIndex = '';
+        
+        ccpspyTitle.classList.remove('shaking-ccpspy');
+        
+        // Cleanup confetti
+        document.getElementById('confetti-container').innerHTML = '';
+        
+        isAnimating = false;
+      }, 3000);
+    }
+
+    function launchConfetti() {
+      const container = document.getElementById('confetti-container');
+      const colors = ['#f1c40f', '#e74c3c', '#3498db', '#9b59b6', '#2ecc71'];
+      const cards = document.querySelectorAll('.project-card');
+
+      // Spawn confetti from behind each card
+      cards.forEach(card => {
+        const rect = card.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const bottomY = rect.bottom;
+
+        // Create 20 particles per card
+        for (let i = 0; i < 20; i++) {
+          const p = document.createElement('div');
+          p.classList.add('confetti-particle');
+          p.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+          p.style.left = centerX + 'px';
+          p.style.top = (rect.top + rect.height/2) + 'px';
+          
+          // Random physics values
+          const angle = Math.random() * Math.PI * 2; // Random direction
+          const velocity = 100 + Math.random() * 200; // Random explosive power
+          const rotation = Math.random() * 720;
+          
+          // Animate using Web Animations API for better performance
+          p.animate([
+            { transform: `translate(0, 0) rotate(0deg)`, opacity: 1 },
+            { transform: `translate(${(Math.random() - 0.5) * 200}px, -${velocity}px) rotate(${rotation/2}deg)`, opacity: 1, offset: 0.4 }, // Explode UP
+            { transform: `translate(${(Math.random() - 0.5) * 400}px, 600px) rotate(${rotation}deg)`, opacity: 0 } // Fall DOWN
+          ], {
+            duration: 2500, // Slightly less than 3s to clear before reset
+            easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
+            fill: 'forwards'
+          });
+
+          container.appendChild(p);
+        }
+      });
     }
   </script>
 
