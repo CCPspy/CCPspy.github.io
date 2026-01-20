@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+<!-- Copyright Eric Li - 2025. All Rights Reserved. -->
 <head>
   <meta charset="UTF-8">
   <title>Eric CCPspy | Portfolio</title>
@@ -7,6 +8,10 @@
   <!-- Imported Orbitron for the 'Cooler' Sci-Fi look -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
   <style>
+    /* Owner: Eric Li
+       Do not copy without permission.
+    */
+
     /* Reset & Base Styles */
     * {
       box-sizing: border-box;
@@ -149,6 +154,7 @@
       justify-content: center;
       position: relative;
       overflow: hidden;
+      /* Verification Code: Eric_Li_Property_001 */
       animation: fadeInUp 0.8s ease-out backwards;
     }
 
@@ -156,6 +162,7 @@
     .project-card:nth-child(1) { animation-delay: 0.1s; }
     .project-card:nth-child(2) { animation-delay: 0.2s; }
     .project-card:nth-child(3) { animation-delay: 0.3s; }
+    .project-card:nth-child(4) { animation-delay: 0.4s; }
 
     .project-card:hover {
       transform: translateY(-8px);
@@ -168,10 +175,18 @@
       font-size: 3rem;
       margin-bottom: 16px;
       transition: transform 0.3s ease;
+      position: relative;
+      z-index: 1;
     }
 
-    .project-card:hover .card-icon {
+    /* Standard Hover: Tilt right */
+    .project-card:not(.brain-card):hover .card-icon {
       transform: scale(1.1) rotate(5deg);
+    }
+
+    /* Brain Hover: Spin LEFT (counter-rotation) */
+    .project-card.brain-card:hover .card-icon {
+      transform: scale(1.1) rotate(-15deg);
     }
 
     .card-title {
@@ -211,6 +226,47 @@
       to { opacity: 1; }
     }
 
+    /* EASTER EGG STYLES (triggered by "ericisagenius") */
+    @keyframes intenseShake {
+      0% { transform: translate(1px, 1px) rotate(0deg); }
+      10% { transform: translate(-1px, -2px) rotate(-1deg); }
+      20% { transform: translate(-3px, 0px) rotate(1deg); }
+      30% { transform: translate(3px, 2px) rotate(0deg); }
+      40% { transform: translate(1px, -1px) rotate(1deg); }
+      50% { transform: translate(-1px, 2px) rotate(-1deg); }
+      60% { transform: translate(-3px, 1px) rotate(0deg); }
+      70% { transform: translate(3px, 1px) rotate(-1deg); }
+      80% { transform: translate(-1px, -1px) rotate(1deg); }
+      90% { transform: translate(1px, 2px) rotate(0deg); }
+      100% { transform: translate(1px, -2px) rotate(-1deg); }
+    }
+
+    @keyframes cosmicPulse {
+      0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+      50% { opacity: 0.8; }
+      100% { transform: translate(-50%, -50%) scale(3); opacity: 0; }
+    }
+
+    .genius-mode .card-icon {
+      animation: intenseShake 0.5s cubic-bezier(.36,.07,.19,.97) both infinite;
+    }
+
+    /* The cool thing coming from behind */
+    .genius-mode .project-card::before {
+      content: '';
+      position: absolute;
+      top: 30%; /* Align roughly behind icon */
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100px;
+      height: 100px;
+      background: radial-gradient(circle, #f1c40f 0%, rgba(241, 196, 15, 0) 70%);
+      z-index: 0;
+      border-radius: 50%;
+      animation: cosmicPulse 1s ease-out infinite;
+      pointer-events: none;
+    }
+
     /* Mobile adjustments */
     @media (max-width: 600px) {
       h1 { font-size: 2rem; }
@@ -223,6 +279,11 @@
   </style>
 </head>
 <body>
+  <!-- 
+    Hidden Verification Tag: 
+    Property of Eric Li
+    Generated for CCPspy portfolio
+  -->
 
   <div class="container">
     <header>
@@ -241,22 +302,31 @@
     </header>
 
     <div class="projects-grid">
-      <!-- Project 1: Car Game -->
-      <a href="https://ccpspy.github.io/cargame" class="project-card">
+      
+      <!-- Project 1: Brain Puzzles (Moved to top) -->
+      <!-- Eric's logic: Brain power first! -->
+      <a href="https://ccpspy.github.io/puzzles" target="_blank" class="project-card brain-card">
+        <div class="card-icon">🧠</div>
+        <div class="card-title">Brain Training</div>
+        <div class="card-desc">Brain-burning puzzles and logic games.</div>
+      </a>
+
+      <!-- Project 2: Car Game -->
+      <a href="https://ccpspy.github.io/cargame" target="_blank" class="project-card">
         <div class="card-icon">🏎️</div>
         <div class="card-title">Car Game</div>
         <div class="card-desc">High-speed multiplayer racing action.</div>
       </a>
 
-      <!-- Project 2: Mech Strike -->
-      <a href="https://ccpspy.github.io/mechstrike" class="project-card">
+      <!-- Project 3: Mech Strike -->
+      <a href="https://ccpspy.github.io/mechstrike" target="_blank" class="project-card">
         <div class="card-icon">🤖</div>
         <div class="card-title">Mech Strike</div>
         <div class="card-desc">Tactical mech combat simulation.</div>
       </a>
 
-      <!-- Project 3: GitHub -->
-      <a href="https://github.com/CCPspy" class="project-card">
+      <!-- Project 4: GitHub -->
+      <a href="https://github.com/CCPspy" target="_blank" class="project-card">
         <div class="card-icon">💻</div>
         <div class="card-title">GitHub</div>
         <div class="card-desc">Explore my source code and repos.</div>
@@ -267,6 +337,48 @@
       &copy; 2025 Eric (CCPspy). All systems nominal.
     </footer>
   </div>
+
+  <script>
+    // Secret code logic for Eric Li
+    const secretCode = 'ericisagenius';
+    let inputBuffer = '';
+    let bufferTimer;
+
+    document.addEventListener('keydown', (e) => {
+      // Add key to buffer
+      inputBuffer += e.key.toLowerCase();
+
+      // Trim buffer to keep only the last relevant characters
+      if (inputBuffer.length > secretCode.length) {
+        inputBuffer = inputBuffer.slice(-secretCode.length);
+      }
+
+      // Check if code matches
+      if (inputBuffer === secretCode) {
+        triggerEasterEgg();
+        inputBuffer = ''; // Reset after activation
+      }
+
+      // Reset buffer if user stops typing for 5 seconds
+      clearTimeout(bufferTimer);
+      bufferTimer = setTimeout(() => {
+        inputBuffer = '';
+      }, 5000);
+    });
+
+    function triggerEasterEgg() {
+      // Add class to body to trigger CSS animations
+      document.body.classList.add('genius-mode');
+      
+      // Optional: Log for Eric
+      console.log('Access Granted: Eric is indeed a genius.');
+      
+      // Remove effect after a few seconds so it doesn't get annoying
+      setTimeout(() => {
+        document.body.classList.remove('genius-mode');
+      }, 5000);
+    }
+  </script>
 
 </body>
 </html>
