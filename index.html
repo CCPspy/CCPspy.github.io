@@ -164,7 +164,7 @@
       align-items: center;
       justify-content: center;
       position: relative;
-      overflow: visible; /* Changed to visible so brain can fly out if needed */
+      overflow: visible; 
       /* Verification Code: Eric_Li_Property_001 */
       animation: fadeInUp 0.8s ease-out backwards;
       z-index: 20;
@@ -387,6 +387,7 @@
       const ericTitle = document.getElementById('eric-title');
       const ccpspyTitle = document.getElementById('ccpspy-title');
       const brainIcon = document.getElementById('brain-icon');
+      const brainCard = document.getElementById('brain-card-el'); // Parent container
       const allCards = document.querySelectorAll('.project-card');
       
       // 1. Shake CCPspy AND Cards
@@ -396,7 +397,12 @@
       // 2. Launch Confetti (Flicks from behind buttons)
       launchConfetti();
 
-      // 3. Move Eric & Brain to Center
+      // 3. Move Eric & Brain to Center (Setup z-index so they don't hide)
+      // We lift the specific elements to the highest level
+      brainCard.style.zIndex = '5000'; 
+      ericTitle.style.zIndex = '5000';
+      ericTitle.style.position = 'relative'; // Ensure z-index applies
+
       // Calculate center of viewport
       const viewportCenterX = window.innerWidth / 2;
       const viewportCenterY = window.innerHeight / 2;
@@ -407,7 +413,6 @@
 
       // Calculate translation deltas
       // We want Brain sitting ON TOP of Eric
-      // Target positions relative to viewport center
       const ericTargetY = viewportCenterY + 20; 
       const brainTargetY = viewportCenterY - 60; // Just above Eric
 
@@ -418,53 +423,74 @@
       const brainDeltaY = brainTargetY - (brainRect.top + brainRect.height / 2);
 
       // Apply Initial Transformation (Move to middle & Scale Up)
-      ericTitle.style.transition = 'transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1)';
-      brainIcon.style.transition = 'transform 1.2s cubic-bezier(0.2, 0.8, 0.2, 1)';
+      // Transition set via JS to ensure it's fresh
+      ericTitle.style.transition = 'transform 1.5s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 1s ease';
+      brainIcon.style.transition = 'transform 1.5s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 1s ease';
       
-      // Force Z-index so Brain is on top of Eric (Eric z=50, Brain needs >50)
-      brainIcon.style.zIndex = '1000';
-      ericTitle.style.zIndex = '900';
-
       requestAnimationFrame(() => {
         ericTitle.style.transform = `translate(${ericDeltaX}px, ${ericDeltaY}px) scale(2)`;
         brainIcon.style.transform = `translate(${brainDeltaX}px, ${brainDeltaY}px) scale(3)`;
       });
 
-      // 4. Fly Out (After 1.5s)
+      // 4. Fly Out (Start after 2s hold)
       setTimeout(() => {
         // Move them waaaay up off screen
         const flyOutY = -window.innerHeight * 1.5; // 1.5x screen height up
+        
+        // Use a "fly out" easing
+        ericTitle.style.transition = 'transform 1.2s cubic-bezier(0.5, 0, 1, 0.5)';
+        brainIcon.style.transition = 'transform 1.2s cubic-bezier(0.5, 0, 1, 0.5)';
+        
         ericTitle.style.transform = `translate(${ericDeltaX}px, ${flyOutY}px) scale(2.5)`;
         brainIcon.style.transform = `translate(${brainDeltaX}px, ${flyOutY}px) scale(3.5)`;
-      }, 1500);
+      }, 2000);
 
-      // 5. Reset Everything (After 3s)
+      // 5. Smooth Reset & Fade In (Start at 3.5s, ends at 5s)
       setTimeout(() => {
-        // INSTANT RESET (No floating back)
-        ericTitle.style.transition = 'none'; // Disable animation for reset
-        brainIcon.style.transition = 'none'; // Disable animation for reset
+        // Step A: Instant Silent Reset to Original Position (Invisible)
+        ericTitle.style.transition = 'none';
+        brainIcon.style.transition = 'none';
         
-        // Reset transforms immediately
+        ericTitle.style.opacity = '0';
+        brainIcon.style.opacity = '0';
+        
         ericTitle.style.transform = 'translate(0,0) scale(1)';
         brainIcon.style.transform = 'translate(0,0) scale(1)';
         
-        brainIcon.style.zIndex = '';
-        ericTitle.style.zIndex = '';
-        
+        // Stop shaking
         ccpspyTitle.classList.remove('shaking-ccpspy');
         allCards.forEach(card => card.classList.remove('shaking-element'));
         
         // Cleanup confetti
         document.getElementById('confetti-container').innerHTML = '';
+
+        // Step B: Gentle Fade In (Next Frame)
+        requestAnimationFrame(() => {
+            // Re-enable transition for opacity only
+            ericTitle.style.transition = 'opacity 1.5s ease';
+            brainIcon.style.transition = 'opacity 1.5s ease';
+            
+            // Fade back to visible
+            ericTitle.style.opacity = '1';
+            brainIcon.style.opacity = '1';
+        });
+
+      }, 3500);
+
+      // 6. Final Cleanup (At 5.1s)
+      setTimeout(() => {
+        brainCard.style.zIndex = '';
+        ericTitle.style.zIndex = '';
+        ericTitle.style.position = '';
         
-        // Brief timeout to re-enable transitions for future hover effects
-        setTimeout(() => {
-            ericTitle.style.transition = ''; 
-            brainIcon.style.transition = '';
-            isAnimating = false;
-        }, 100);
+        // Clear inline styles to return to CSS defaults
+        ericTitle.style.transition = '';
+        brainIcon.style.transition = '';
+        ericTitle.style.opacity = '';
+        brainIcon.style.opacity = '';
         
-      }, 3000);
+        isAnimating = false;
+      }, 5100);
     }
 
     function launchConfetti() {
@@ -484,7 +510,6 @@
           p.style.left = centerX + 'px';
           p.style.top = (rect.top + rect.height/2) + 'px';
           
-          const angle = Math.random() * Math.PI * 2;
           const velocity = 100 + Math.random() * 200; 
           const rotation = Math.random() * 720;
           
@@ -493,7 +518,7 @@
             { transform: `translate(${(Math.random() - 0.5) * 200}px, -${velocity}px) rotate(${rotation/2}deg)`, opacity: 1, offset: 0.4 }, 
             { transform: `translate(${(Math.random() - 0.5) * 400}px, 600px) rotate(${rotation}deg)`, opacity: 0 } 
           ], {
-            duration: 2500,
+            duration: 3500, // Extended duration to match 5s event
             easing: 'cubic-bezier(0.25, 1, 0.5, 1)',
             fill: 'forwards'
           });
