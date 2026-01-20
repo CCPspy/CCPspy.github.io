@@ -2,276 +2,271 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Welcome to Eric(CCPspy)'s Website!</title>
+  <title>Eric CCPspy | Portfolio</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Imported Orbitron for the 'Cooler' Sci-Fi look -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
   <style>
+    /* Reset & Base Styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      margin: 0; padding: 0;
-      background: #222;
-      color: #eee;
+      font-family: 'Inter', sans-serif;
+      background-color: #050b14; /* Darker Slate */
+      color: #e2e8f0;
       display: flex;
       flex-direction: column;
-      min-height: 100vh;
       align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      line-height: 1.6;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
     }
-    .intro {
-      margin-top: 40px;
+
+    /* "Less Boring" Background: Cyber Grid */
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background-image: 
+        linear-gradient(rgba(30, 41, 59, 0.4) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(30, 41, 59, 0.4) 1px, transparent 1px);
+      background-size: 50px 50px;
+      z-index: -2;
+    }
+
+    /* Radial Glow for depth */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle at center, rgba(241, 196, 15, 0.05) 0%, transparent 60%);
+      z-index: -1;
+      pointer-events: none;
+    }
+
+    /* Container */
+    .container {
+      max-width: 900px;
+      width: 100%;
       text-align: center;
     }
-    .links {
-      margin: 30px 0 40px 0;
+
+    /* Header / Intro */
+    header {
+      margin-bottom: 70px;
+      animation: fadeInDown 0.8s ease-out;
+    }
+
+    /* Name Styling - Split Layout */
+    .name-wrapper {
       display: flex;
-      flex-wrap: wrap;
       justify-content: center;
-      gap: 18px;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
     }
-    .links a {
-      background: #444;
-      color: #f1c40f;
+
+    h1 {
+      font-family: 'Orbitron', sans-serif; /* New Cool Font */
+      font-size: 3.5rem;
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin: 0;
+      line-height: 1;
+    }
+
+    .name-eric {
+      color: #fff;
+      text-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
+    }
+
+    .name-separator {
+      color: #334155;
+      font-size: 2.5rem;
+      font-weight: 300;
+      margin-top: -5px; /* Visual alignment */
+    }
+
+    .name-ccpspy {
+      color: #f1c40f; /* Signature Yellow */
+      text-shadow: 0 0 20px rgba(241, 196, 15, 0.3);
+    }
+
+    /* School Watermark */
+    .school-tag {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.75rem;
+      color: #475569;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      font-weight: 500;
+      opacity: 0.8;
+      user-select: none; /* Harder to select/copy */
+    }
+
+    p.intro-text {
+      font-size: 1.15rem;
+      color: #94a3b8;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    /* Project Grid */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      width: 100%;
+      perspective: 1000px;
+    }
+
+    /* Project Cards */
+    .project-card {
+      background: rgba(30, 41, 59, 0.7); /* Slight transparency */
+      backdrop-filter: blur(10px);
+      border: 1px solid #334155;
+      border-radius: 16px;
+      padding: 32px 24px;
       text-decoration: none;
-      padding: 8px 16px;
-      border-radius: 12px;
-      transition: background 0.2s;
-    }
-    .links a:hover {
-      background: #f1c40f;
-      color: #222;
-    }
-    .pong-container {
-      background: #111;
-      padding: 20px;
-      border-radius: 20px;
-      margin-bottom: 40px;
-      box-shadow: 0 0 24px #0006;
+      color: inherit;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      animation: fadeInUp 0.8s ease-out backwards;
     }
-    h2 {
-      color: #f1c40f;
-      margin-bottom: 12px;
+
+    /* Staggered Animation Delays */
+    .project-card:nth-child(1) { animation-delay: 0.1s; }
+    .project-card:nth-child(2) { animation-delay: 0.2s; }
+    .project-card:nth-child(3) { animation-delay: 0.3s; }
+
+    .project-card:hover {
+      transform: translateY(-8px);
+      background: rgba(51, 65, 85, 0.8);
+      border-color: #f1c40f;
+      box-shadow: 0 0 30px rgba(241, 196, 15, 0.15);
     }
-    canvas {
-      background: #222;
-      border: 2px solid #444;
-      border-radius: 6px;
-      display: block;
+
+    .card-icon {
+      font-size: 3rem;
+      margin-bottom: 16px;
+      transition: transform 0.3s ease;
     }
-    .pong-instructions {
-      color: #aaa;
-      margin-bottom: 9px;
-      font-size: 15px;
+
+    .project-card:hover .card-icon {
+      transform: scale(1.1) rotate(5deg);
+    }
+
+    .card-title {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+
+    .card-desc {
+      font-size: 0.95rem;
+      color: #94a3b8;
+    }
+
+    /* Footer */
+    footer {
+      margin-top: 80px;
+      color: #475569;
+      font-size: 0.85rem;
+      animation: fadeIn 1.2s ease-out;
+    }
+
+    /* Animations */
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* Mobile adjustments */
+    @media (max-width: 600px) {
+      h1 { font-size: 2rem; }
+      .name-wrapper { gap: 10px; }
+      .name-separator { display: none; } /* Hide separator on mobile for cleaner stack */
+      .name-wrapper { flex-direction: column; }
+      .intro-text { font-size: 1rem; }
+      .project-card { padding: 24px; }
     }
   </style>
 </head>
 <body>
-  <div class="intro">
-    <h1>Welcome to Eric(CCPspy)'s Website!</h1>
-    <p>
-      This is my personal homepage. Explore my projects and other cool stuff linked below.<br>
-      At the bottom, play a quick round of Space Invaders!
-    </p>
-  </div>
-  <div class="links">
-    <a href="https://ccpspy.github.io/cargame">CAR GAME</a>
-    <a href="https://ccpspy.github.io/mechstrike">MECH STRIKE</a>
-    <a href="https://github.com/CCPspy">GITHUB</a>
-    <!-- Add more links as you wish! -->
-  </div>
-  <div class="pong-container">
-    <h2>Space Invaders(My other better games are up top like the car game)</h2>
-    <div class="pong-instructions">
-      Use <b>Left</b> and <b>Right</b> arrow keys to move. Press <b>Space</b> to shoot.<br>
-      Survive waves and climb levels — your score & level are shown below.
+
+  <div class="container">
+    <header>
+      <div class="name-wrapper">
+        <h1 class="name-eric">Eric</h1>
+        <span class="name-separator">//</span>
+        <h1 class="name-ccpspy">CCPspy</h1>
+      </div>
+      
+      <div class="school-tag">Willetton SHS</div>
+
+      <p class="intro-text">
+        Creator, Developer, and 3D Printer. <br>
+        Check out my main projects below.
+      </p>
+    </header>
+
+    <div class="projects-grid">
+      <!-- Project 1: Car Game -->
+      <a href="https://ccpspy.github.io/cargame" class="project-card">
+        <div class="card-icon">🏎️</div>
+        <div class="card-title">Car Game</div>
+        <div class="card-desc">High-speed multiplayer racing action.</div>
+      </a>
+
+      <!-- Project 2: Mech Strike -->
+      <a href="https://ccpspy.github.io/mechstrike" class="project-card">
+        <div class="card-icon">🤖</div>
+        <div class="card-title">Mech Strike</div>
+        <div class="card-desc">Tactical mech combat simulation.</div>
+      </a>
+
+      <!-- Project 3: GitHub -->
+      <a href="https://github.com/CCPspy" class="project-card">
+        <div class="card-icon">💻</div>
+        <div class="card-title">GitHub</div>
+        <div class="card-desc">Explore my source code and repos.</div>
+      </a>
     </div>
-    <!-- canvas kept id 'pong' so existing styles/ids remain compatible -->
-    <canvas id="pong" width="600" height="400"></canvas>
-    <div id="pong-score" style="color:#f1c40f; margin-top:10px; font-size:16px;">Score: 0 | Level: 1</div>
+
+    <footer>
+      &copy; 2025 Eric (CCPspy). All systems nominal.
+    </footer>
   </div>
 
-  <script>
-    // Space Invaders (replaces Pong)
-    const canvas = document.getElementById('pong');
-    const ctx = canvas.getContext('2d');
-    const info = document.getElementById('pong-score');
-
-    // Images (public domain / Wikimedia links)
-    const playerImg = new Image();
-    const alienImg = new Image();
-    const bulletImg = new Image();
-
-    playerImg.crossOrigin = 'anonymous';
-    alienImg.crossOrigin = 'anonymous';
-    bulletImg.crossOrigin = 'anonymous';
-
-    playerImg.src = 'https://upload.wikimedia.org/wikipedia/commons/2/20/Space_Invaders_player.svg';
-    alienImg.src = 'https://upload.wikimedia.org/wikipedia/commons/6/6b/Space_Invaders_alien.svg';
-    bulletImg.src = 'https://upload.wikimedia.org/wikipedia/commons/9/9a/Pixel_bullet.svg';
-
-    let playerReady = false, alienReady = false, bulletReady = false;
-    let assetsLoaded = 0, totalAssets = 3, started = false;
-
-    function assetLoaded(name, ok) {
-      if (name === 'player') playerReady = ok;
-      if (name === 'alien') alienReady = ok;
-      if (name === 'bullet') bulletReady = ok;
-      assetsLoaded++;
-      if (assetsLoaded >= totalAssets && !started) startGame();
-    }
-    playerImg.onload = () => assetLoaded('player', true);
-    alienImg.onload = () => assetLoaded('alien', true);
-    bulletImg.onload = () => assetLoaded('bullet', true);
-    playerImg.onerror = () => { console.warn('player image failed to load'); assetLoaded('player', false); };
-    alienImg.onerror = () => { console.warn('alien image failed to load'); assetLoaded('alien', false); };
-    bulletImg.onerror = () => { console.warn('bullet image failed to load'); assetLoaded('bullet', false); };
-
-    const fallbackTimeout = 4000;
-    const fallbackTimer = setTimeout(() => {
-      if (!started) {
-        console.warn('Assets taking too long — starting with placeholders.');
-        startGame();
-      }
-    }, fallbackTimeout);
-
-    // Game state
-    const player = { x: canvas.width/2 - 20, y: canvas.height - 50, width: 40, height: 30, speed: 6 };
-    const bullets = [];
-    let enemies = [];
-    let enemyDirection = 1;
-    let score = 0;
-    let level = 1;
-    let gameOver = false;
-
-    function createEnemies() {
-      enemies = [];
-      const rows = Math.min(5, 2 + level); // cap rows so it fits
-      const cols = 8;
-      const spacingX = Math.floor((canvas.width - 80) / cols);
-      for (let r = 0; r < rows; r++) {
-        for (let c = 0; c < cols; c++) {
-          enemies.push({ x: 40 + c * spacingX, y: 30 + r * 40, width: 32, height: 24, alive: true });
-        }
-      }
-    }
-    createEnemies();
-
-    let rightPressed = false, leftPressed = false;
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowRight' || e.code === 'ArrowRight') rightPressed = true;
-      if (e.key === 'ArrowLeft' || e.code === 'ArrowLeft') leftPressed = true;
-      if ((e.key === ' ' || e.code === 'Space' || e.key === 'Spacebar') && !gameOver) {
-        e.preventDefault();
-        if (bullets.length < 6) bullets.push({ x: player.x + player.width/2 - 2, y: player.y, speed: 8 });
-      }
-    });
-    document.addEventListener('keyup', (e) => {
-      if (e.key === 'ArrowRight' || e.code === 'ArrowRight') rightPressed = false;
-      if (e.key === 'ArrowLeft' || e.code === 'ArrowLeft') leftPressed = false;
-    });
-
-    function update() {
-      if (gameOver) return;
-      if (rightPressed && player.x + player.width < canvas.width) player.x += player.speed;
-      if (leftPressed && player.x > 0) player.x -= player.speed;
-
-      // bullets
-      for (let i = bullets.length - 1; i >= 0; i--) {
-        const b = bullets[i];
-        b.y -= b.speed;
-        if (b.y + 10 < 0) bullets.splice(i, 1);
-      }
-
-      const alive = enemies.filter(e => e.alive);
-      let shiftDown = false;
-      if (alive.length > 0) {
-        const rightmost = Math.max(...alive.map(e => e.x + e.width));
-        const leftmost = Math.min(...alive.map(e => e.x));
-        if (rightmost + 10 >= canvas.width && enemyDirection === 1) shiftDown = true;
-        if (leftmost - 10 <= 0 && enemyDirection === -1) shiftDown = true;
-
-        alive.forEach(e => {
-          if (shiftDown) e.y += 20;
-          else e.x += enemyDirection * (1 + level * 0.3);
-        });
-        if (shiftDown) enemyDirection *= -1;
-      }
-
-      // collisions
-      for (let i = bullets.length - 1; i >= 0; i--) {
-        const b = bullets[i];
-        for (let j = 0; j < enemies.length; j++) {
-          const e = enemies[j];
-          if (e.alive && b.x < e.x + e.width && b.x + 4 > e.x && b.y < e.y + e.height && b.y + 10 > e.y) {
-            e.alive = false;
-            bullets.splice(i, 1);
-            score += 10 * level;
-            info.textContent = `Score: ${score} | Level: ${level}`;
-            break;
-          }
-        }
-      }
-
-      for (let k = 0; k < enemies.length; k++) {
-        const e = enemies[k];
-        if (e.alive && e.y + e.height >= player.y) {
-          gameOver = true; break;
-        }
-      }
-
-      if (enemies.every(e => !e.alive)) {
-        level++;
-        createEnemies();
-        info.textContent = `Score: ${score} | Level: ${level}`;
-        // small pause could be added here
-      }
-    }
-
-    // Drawing with safe fallbacks
-    function drawPlayer() {
-      if (playerReady && playerImg.complete && playerImg.naturalWidth !== 0) {
-        ctx.drawImage(playerImg, player.x, player.y, player.width, player.height);
-      } else {
-        ctx.fillStyle = 'lime'; ctx.fillRect(player.x, player.y, player.width, player.height);
-      }
-    }
-    function drawBullet(b) {
-      if (bulletReady && bulletImg.complete && bulletImg.naturalWidth !== 0) {
-        ctx.drawImage(bulletImg, b.x, b.y, 4, 10);
-      } else { ctx.fillStyle = 'white'; ctx.fillRect(b.x, b.y, 4, 10); }
-    }
-    function drawAlien(e) {
-      if (alienReady && alienImg.complete && alienImg.naturalWidth !== 0) {
-        ctx.drawImage(alienImg, e.x, e.y, e.width, e.height);
-      } else { ctx.fillStyle = 'red'; ctx.fillRect(e.x, e.y, e.width, e.height); }
-    }
-
-    function draw() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      drawPlayer();
-      for (let i = 0; i < bullets.length; i++) drawBullet(bullets[i]);
-      for (let i = 0; i < enemies.length; i++) { const e = enemies[i]; if (e.alive) drawAlien(e); }
-
-      if (gameOver) {
-        ctx.fillStyle = 'rgba(0,0,0,0.6)'; ctx.fillRect(0,0,canvas.width,canvas.height);
-        ctx.fillStyle = 'white'; ctx.font = '40px Arial'; ctx.textAlign = 'center';
-        ctx.fillText('Game Over', canvas.width/2, canvas.height/2 - 10);
-        ctx.font = '20px Arial'; ctx.fillText(`Final Score: ${score}`, canvas.width/2, canvas.height/2 + 30);
-      }
-    }
-
-    function loop() { update(); draw(); requestAnimationFrame(loop); }
-
-    function startGame() { if (started) return; started = true; clearTimeout(fallbackTimer); info.textContent = `Score: ${score} | Level: ${level}`; requestAnimationFrame(loop); }
-
-    // ensure cached images are counted
-    setTimeout(() => {
-      if (playerImg.complete) playerImg.onload && playerImg.onload();
-      if (alienImg.complete) alienImg.onload && alienImg.onload();
-      if (bulletImg.complete) bulletImg.onload && bulletImg.onload();
-    }, 0);
-
-  </script>
 </body>
 </html>
